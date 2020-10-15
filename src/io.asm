@@ -44,6 +44,8 @@ _read:
     mov eax, 0x3 ; sys_read
     int 0x80
 
+    mov [ecx + eax - 1], byte 0x0 ; because NULL-terminated string
+
     pop edx
     pop ecx
     pop ebx
