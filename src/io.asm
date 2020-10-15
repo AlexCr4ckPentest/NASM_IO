@@ -3,14 +3,17 @@
 %include "../include/io-defs.inc"
 
 
+
 global _write
 global _read
-
 global _fputchar
 global _fgetchar
-
 global _putchar
 global _getchar
+global _fputs
+global _fgets
+global _puts
+global _gets
 
 
 
@@ -121,4 +124,30 @@ _getchar:
     call _fgetchar
 
     pop ebx
+    ret
+
+
+
+; eax - handle
+; ebx - string
+_fputs:
+    ret
+
+
+
+; eax - handle
+; ebx - buffer
+_fgets:
+    ret
+
+
+
+; eax - string
+_puts:
+    ret
+
+
+
+; eax - buffer
+_gets:
     ret
