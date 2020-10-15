@@ -3,6 +3,9 @@
 global _write
 global _read
 
+global _fputchar
+global _fgetchar
+
 
 
 section .text
@@ -45,6 +48,43 @@ _read:
     int 0x80
 
     mov [ecx + eax - 1], byte 0x0 ; because NULL-terminated string
+
+    pop edx
+    pop ecx
+    pop ebx
+    ret
+
+
+
+; eax - handle
+; ebx - char
+_fputchar:
+    push ebx
+
+    mov ebx, esp
+    mov ecx, 0x1
+    call _write
+
+    pop ebx
+    ret
+
+
+
+; eax - handle
+; output: eax - char code
+_fgetchar:
+    push ebx
+    push ecx
+    push edx
+
+    mov ebx, eax
+    mov eax, 0x3
+    push ebx
+    mov ecx, esp
+    mov edx, 0x1
+    int 0x80
+    mov eax, [esp]
+    pop ebx
 
     pop edx
     pop ecx
