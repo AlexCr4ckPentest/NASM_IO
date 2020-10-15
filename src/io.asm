@@ -1,10 +1,19 @@
 ; io.asm
 
+%include "../include/io-defs.inc"
+
+
+
 global _write
 global _read
-
 global _fputchar
 global _fgetchar
+global _putchar
+global _getchar
+global _fputs
+global _fgets
+global _puts
+global _gets
 
 
 
@@ -89,4 +98,56 @@ _fgetchar:
     pop edx
     pop ecx
     pop ebx
+    ret
+
+
+
+; eax - char
+_putchar:
+    push ebx
+
+    mov ebx, eax
+    mov eax, STDOUT
+    call _fputchar
+
+    pop ebx
+    ret
+
+
+
+; output: eax - char code
+_getchar:
+    push ebx
+
+    mov ebx, eax
+    mov eax, STDIN
+    call _fgetchar
+
+    pop ebx
+    ret
+
+
+
+; eax - handle
+; ebx - string
+_fputs:
+    ret
+
+
+
+; eax - handle
+; ebx - buffer
+_fgets:
+    ret
+
+
+
+; eax - string
+_puts:
+    ret
+
+
+
+; eax - buffer
+_gets:
     ret
