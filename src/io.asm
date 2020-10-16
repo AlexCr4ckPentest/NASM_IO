@@ -1,6 +1,7 @@
 ; io.asm
 
 %include "../include/io-defs.inc"
+%include "../include/strlen.inc"
 
 
 
@@ -11,9 +12,9 @@ global _fgetchar
 global _putchar
 global _getchar
 global _fputs
-global _fgets
+;global _fgets
 global _puts
-global _gets
+;global _gets
 
 
 
@@ -131,6 +132,26 @@ _getchar:
 ; eax - handle
 ; ebx - string
 _fputs:
+    push ebx
+    push ecx
+    push edx
+
+    mov edx, eax
+
+    mov eax, ebx
+    call _strlen
+    mov ecx, eax
+
+    mov eax, edx
+    call _write
+
+    mov eax, edx
+    mov ebx, 0xa
+    call _fputchar
+
+    pop edx
+    pop ecx
+    pop ebx
     ret
 
 
@@ -144,6 +165,13 @@ _fgets:
 
 ; eax - string
 _puts:
+    push ebx
+
+    mov ebx, eax
+    mov eax, STDIN
+    call _fputs
+
+    pop ebx
     ret
 
 
