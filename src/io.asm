@@ -12,7 +12,7 @@ global _fgetchar
 global _putchar
 global _getchar
 global _fputs
-global _fgets
+;global _fgets
 global _puts
 ;global _gets
 
@@ -159,26 +159,7 @@ _fputs:
 ; eax - handle
 ; ebx - buffer
 _fgets:
-    push ebx
-    push ecx
-
-    .next:
-        push eax
-        call _fgetchar
-        cmp eax, EOF
-        je .end_input
-        cmp eax, 0xa
-        je .end_input
-        mov [ebx], eax
-        pop eax
-        inc ebx
-        jmp .next
-
-    .end_input:
-        pop eax
-        pop ecx
-        pop ebx
-        ret
+    ret
 
 
 
