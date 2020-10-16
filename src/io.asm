@@ -134,19 +134,22 @@ _getchar:
 _fputs:
     push ebx
     push ecx
-    
-    push eax
+    push edx
+
+    mov edx, eax
+
     mov eax, ebx
     call _strlen
     mov ecx, eax
-    pop eax ; handle
 
-    push eax
+    mov eax, edx
     call _write
-    pop eax
+
+    mov eax, edx
     mov ebx, 0xa
     call _fputchar
 
+    pop edx
     pop ecx
     pop ebx
     ret
