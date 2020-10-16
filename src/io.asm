@@ -13,7 +13,7 @@ global _putchar
 global _getchar
 global _fputs
 global _fgets
-;global _puts
+global _puts
 ;global _gets
 
 
@@ -184,6 +184,13 @@ _fgets:
 
 ; eax - string
 _puts:
+    push ebx
+
+    mov ebx, eax
+    mov eax, STDIN
+    call _fputs
+
+    pop ebx
     ret
 
 
