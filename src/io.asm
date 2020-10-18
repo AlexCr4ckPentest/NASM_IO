@@ -4,6 +4,9 @@
 
 
 
+global _open
+global _close
+
 global _write
 global _read
 global _fputchar
@@ -20,6 +23,33 @@ global _setw
 
 
 section .text
+
+
+
+; eax - filename
+; ebx - flags
+_open:
+    push ebx
+    push ecx
+ 
+    mov ecx, ebx
+    mov ebx, eax
+    mov eax, 0x5 ; sys_open
+    int 0x80
+
+    pop ecx
+    pop ebx
+    ret
+
+
+
+; eax - handle
+_close:
+    push ebx
+    mov ebx, eax
+    int 0x80
+    pop ebx
+    ret
 
 
 
