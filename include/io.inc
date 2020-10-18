@@ -14,3 +14,6 @@ extern _fgets
 
 extern _puts ; linked to stdout
 extern _gets ; linked to stdin
+
+extern _fsetw
+extern _setw ; linkend to stdout

@@ -15,6 +15,8 @@ global _fputs
 global _fgets
 global _puts
 global _gets
+global _fsetw
+global _setw
 
 
 
@@ -216,6 +218,49 @@ _gets:
     mov ebx, eax
     mov eax, STDOUT
     call _fgets
+
+    pop ebx
+    pop eax
+    ret
+
+
+
+; eax - handle
+; ebx - count
+_fsetw:
+    push eax
+    push ebx
+    push ecx
+
+    mov ecx, eax
+
+    .next:
+        cmp ebx, 0x0
+        je .end
+        mov eax, ecx
+        push ebx
+        mov ebx, 0x20 ; space
+        call _fputchar
+        pop ebx
+        dec ebx
+        jmp .next
+
+    .end:
+        pop ecx
+        pop ebx
+        pop eax
+        ret
+
+
+
+; eax - count
+_setw:
+    push eax
+    push ebx
+
+    mov ebx, eax
+    mov eax, STDOUT
+    call _fsetw
 
     pop ebx
     pop eax
