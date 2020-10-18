@@ -1,7 +1,6 @@
 ; io.asm
 
 %include "../include/io-defs.inc"
-%include "../include/strlen.inc"
 
 
 
@@ -21,6 +20,25 @@ global _setw
 
 
 section .text
+
+
+
+; eax - string
+; output: eax - string length
+__strlen:
+    push ebx
+    xor ebx, ebx
+
+    .next:
+        cmp [eax+ebx], byte 0x0
+        je .end
+        inc ebx
+        jmp .next
+
+    .end:
+        mov eax, ebx
+        pop ebx
+        ret
 
 
 
@@ -148,7 +166,7 @@ _fputs:
 
     push eax
     mov eax, ebx
-    call _strlen
+    call __strlen
     mov ecx, eax
     pop eax
 
