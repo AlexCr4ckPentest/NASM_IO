@@ -12,9 +12,9 @@ global _fgetchar
 global _putchar
 global _getchar
 global _fputs
-;global _fgets
+global _fgets
 global _puts
-;global _gets
+global _gets
 
 
 
@@ -169,7 +169,31 @@ _fputs:
 ; eax - handle
 ; ebx - buffer
 _fgets:
-    ret
+    push eax
+    push ebx
+    push ecx
+    push edx
+
+    xor ecx, ecx
+    mov edx, eax
+
+    .read_next:
+        mov eax, edx
+        call _fgetchar
+        cmp eax, 0xa
+        je .end
+        mov [ebx+ecx], eax
+        inc ecx
+        jmp .read_next
+
+    .end:
+        mov [ebx+ecx], byte 0x0
+        pop eax
+        pop edx
+        pop ecx
+        pop ebx
+        ret
+
 
 
 
@@ -190,4 +214,13 @@ _puts:
 
 ; eax - buffer
 _gets:
+    push eax
+    push ebx
+
+    mov ebx, eax
+    mov eax, STDOUT
+    call _fgets
+
+    pop ebx
+    pop eax
     ret
