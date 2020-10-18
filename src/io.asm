@@ -196,7 +196,6 @@ _fgets:
 
 
 
-
 ; eax - string
 _puts:
     push eax
