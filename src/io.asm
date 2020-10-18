@@ -26,6 +26,7 @@ section .text
 ; ebx - buffer
 ; ecx - count
 _write:
+    push eax
     push ebx
     push ecx
     push edx
@@ -39,6 +40,7 @@ _write:
     pop edx
     pop ecx
     pop ebx
+    pop eax
     ret
 
 
@@ -47,6 +49,7 @@ _write:
 ; ebx - buffer
 ; ecx - count
 _read:
+    push eax
     push ebx
     push ecx
     push edx
@@ -62,6 +65,7 @@ _read:
     pop edx
     pop ecx
     pop ebx
+    pop eax
     ret
 
 
@@ -69,6 +73,7 @@ _read:
 ; eax - handle
 ; ebx - char
 _fputchar:
+    push eax
     push ebx
 
     mov ebx, esp
@@ -76,6 +81,7 @@ _fputchar:
     call _write
 
     pop ebx
+    pop eax
     ret
 
 
@@ -105,6 +111,7 @@ _fgetchar:
 
 ; eax - char
 _putchar:
+    push eax
     push ebx
 
     mov ebx, eax
@@ -112,6 +119,7 @@ _putchar:
     call _fputchar
 
     pop ebx
+    pop eax
     ret
 
 
@@ -132,6 +140,7 @@ _getchar:
 ; eax - handle
 ; ebx - string
 _fputs:
+    push eax
     push ebx
     push ecx
     push edx
@@ -152,6 +161,7 @@ _fputs:
     pop edx
     pop ecx
     pop ebx
+    pop eax
     ret
 
 
@@ -165,6 +175,7 @@ _fgets:
 
 ; eax - string
 _puts:
+    push eax
     push ebx
 
     mov ebx, eax
@@ -172,6 +183,7 @@ _puts:
     call _fputs
 
     pop ebx
+    pop eax
     ret
 
 
