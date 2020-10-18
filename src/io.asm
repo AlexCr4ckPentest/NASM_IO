@@ -143,22 +143,19 @@ _fputs:
     push eax
     push ebx
     push ecx
-    push edx
 
-    mov edx, eax
-
+    push eax
     mov eax, ebx
     call _strlen
     mov ecx, eax
+    pop eax
 
-    mov eax, edx
     call _write
 
-    mov eax, edx
+    ; eax already contains handle after _write
     mov ebx, 0xa
     call _fputchar
 
-    pop edx
     pop ecx
     pop ebx
     pop eax
