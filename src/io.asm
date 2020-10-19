@@ -28,15 +28,19 @@ section .text
 
 ; eax - filename
 ; ebx - flags
+; ecx - mode
 _open:
     push ebx
     push ecx
+    push edx
  
+    mov edx, ecx
     mov ecx, ebx
     mov ebx, eax
     mov eax, 0x5 ; sys_open
     int 0x80
 
+    pop edx
     pop ecx
     pop ebx
     ret
@@ -47,6 +51,7 @@ _open:
 _close:
     push ebx
     mov ebx, eax
+    mov eax, 0x6
     int 0x80
     pop ebx
     ret
@@ -228,6 +233,8 @@ _fgets:
         mov eax, edx
         call _fgetchar
         cmp eax, 0xa
+        je .end
+        cmp eax, EOF
         je .end
         mov [ebx+ecx], eax
         inc ecx
