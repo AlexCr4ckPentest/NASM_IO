@@ -5,8 +5,6 @@
 %define STDIN   0x0
 %define STDERR  0x2
 
-%define EOF     0xffffffff
-
 %define O_READ_ONLY     00
 %define O_WRITE_ONLY    01
 %define O_READ_WRITE    02
