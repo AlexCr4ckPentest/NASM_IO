@@ -29,6 +29,7 @@ section .text
 ; eax - filename
 ; ebx - flags
 ; ecx - mode
+; output: eax - handle
 _open:
     push ebx
     push ecx
@@ -49,11 +50,15 @@ _open:
 
 ; eax - handle
 _close:
+    push eax
     push ebx
+
     mov ebx, eax
     mov eax, 0x6
     int 0x80
+
     pop ebx
+    pop eax
     ret
 
 
@@ -80,8 +85,8 @@ __strlen:
 ; eax - hande
 ; ebx - buffer
 ; ecx - count
+; output: eax - written bytes count
 _write:
-    push eax
     push ebx
     push ecx
     push edx
@@ -95,7 +100,6 @@ _write:
     pop edx
     pop ecx
     pop ebx
-    pop eax
     ret
 
 
@@ -103,8 +107,8 @@ _write:
 ; eax - handle
 ; ebx - buffer
 ; ecx - count
+; output: eax - read bytes count
 _read:
-    push eax
     push ebx
     push ecx
     push edx
@@ -115,28 +119,34 @@ _read:
     mov eax, 0x3 ; sys_read
     int 0x80
 
+%if 0
     mov [ecx + eax - 1], byte 0x0 ; because NULL-terminated string
+%endif
 
     pop edx
     pop ecx
     pop ebx
-    pop eax
     ret
 
 
 
 ; eax - handle
 ; ebx - char
+; output: eax - written bytes count (1)
 _fputchar:
-    push eax
+    push ecx
+    push edx
     push ebx
 
-    mov ebx, esp
-    mov ecx, 0x1
-    call _write
+    mov ecx, esp
+    mov ebx, eax
+    mov eax, 0x4
+    mov edx, 0x1 ; one byte to write
+    int 0x80
 
     pop ebx
-    pop eax
+    pop edx
+    pop ecx
     ret
 
 
@@ -150,11 +160,15 @@ _fgetchar:
 
     mov ebx, eax
     mov eax, 0x3
+
     push ebx
+
     mov ecx, esp
     mov edx, 0x1
     int 0x80
+
     mov eax, [esp]
+
     pop ebx
 
     pop edx
@@ -166,7 +180,6 @@ _fgetchar:
 
 ; eax - char
 _putchar:
-    push eax
     push ebx
 
     mov ebx, eax
@@ -174,7 +187,6 @@ _putchar:
     call _fputchar
 
     pop ebx
-    pop eax
     ret
 
 
@@ -194,34 +206,72 @@ _getchar:
 
 ; eax - handle
 ; ebx - string
+; output: eax - written bytes count
 _fputs:
-    push eax
+
+%if 1
     push ebx
     push ecx
+    push edx
 
     push eax
+
     mov eax, ebx
     call __strlen
     mov ecx, eax
-    pop eax
 
+    mov eax, [esp]
     call _write
+    mov edx, eax
 
-    ; eax already contains handle after _write
+    mov eax, [esp]
     mov ebx, 0xa
     call _fputchar
+    inc edx
 
+    pop eax
+    mov eax, edx
+
+    pop edx
     pop ecx
     pop ebx
-    pop eax
+%endif
+
+%if 0
+    push ebx
+    push ecx
+    push edx
+
+    sub esp, 8
+
+    mov dword [esp-4], ebx
+    mov dword [esp-8], eax
+
+    .write_next:
+        mov eax, dword [esp-8]
+        mov ebx, dword [esp-4]
+        movzx ebx, byte [ebx]
+        movsx ebx, bl
+        call _fputchar
+        add dword [esp-4], 1
+        cmp bl, bl
+        jne .write_next
+
+    add esp, 8
+
+    pop edx
+    pop ecx
+    pop ebx
+%endif
+
     ret
 
 
 
 ; eax - handle
 ; ebx - buffer
+; output: eax - read bytes count
 _fgets:
-    push eax
     push ebx
     push ecx
     push edx
@@ -234,25 +284,24 @@ _fgets:
         call _fgetchar
         cmp eax, 0xa
         je .end
-        cmp eax, EOF
-        je .end
         mov [ebx+ecx], eax
         inc ecx
         jmp .read_next
 
     .end:
         mov [ebx+ecx], byte 0x0
-        pop eax
-        pop edx
-        pop ecx
-        pop ebx
-        ret
+        mov eax, ecx
+
+    pop edx
+    pop ecx
+    pop ebx
+    ret
 
 
 
 ; eax - string
+; output: eax - written bytes count
 _puts:
-    push eax
     push ebx
 
     mov ebx, eax
@@ -260,14 +309,13 @@ _puts:
     call _fputs
 
     pop ebx
-    pop eax
     ret
 
 
 
 ; eax - buffer
+; outptut: eax - read bytes count
 _gets:
-    push eax
     push ebx
 
     mov ebx, eax
@@ -275,7 +323,6 @@ _gets:
     call _fgets
 
     pop ebx
-    pop eax
     ret
 
 
