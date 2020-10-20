@@ -139,18 +139,16 @@ _fgetchar:
     push ecx
     push edx
 
+    sub esp, 0x1
+
+    lea ecx, [esp-1]
     mov ebx, eax
     mov eax, 0x3
-
-    push ebx
-
-    mov ecx, esp
     mov edx, 0x1
     int 0x80
+    movzx eax, byte [esp-1]
 
-    mov eax, [esp]
-
-    pop ebx
+    add esp, 0x1
 
     pop edx
     pop ecx
