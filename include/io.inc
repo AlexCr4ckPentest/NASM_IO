@@ -5,6 +5,7 @@
 
 extern _open
 extern _close
+extern _lseek
 
 extern _write
 extern _read

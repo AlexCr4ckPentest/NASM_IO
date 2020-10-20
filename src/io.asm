@@ -6,6 +6,7 @@
 
 global _open
 global _close
+global _lseek
 
 global _write
 global _read
@@ -57,6 +58,14 @@ _close:
 
     pop ebx
     pop eax
+    ret
+
+
+
+; eax - handle
+; ebx - offset
+; ecx - whence
+_lseek:
     ret
 
 
