@@ -9,16 +9,22 @@ global _close
 
 global _write
 global _read
+
 global _fputchar
 global _fgetchar
-global _putchar
-global _getchar
+
 global _fputs
 global _fgets
+
+global _fsetw
+
+%if 0
+global _putchar
+global _getchar
 global _puts
 global _gets
-global _fsetw
 global _setw
+%endif
 
 
 
@@ -100,10 +106,6 @@ _read:
     mov eax, 0x3 ; sys_read
     int 0x80
 
-%if 0
-    mov [ecx + eax - 1], byte 0x0 ; because NULL-terminated string
-%endif
-
     pop edx
     pop ecx
     pop ebx
@@ -152,32 +154,6 @@ _fgetchar:
 
     pop edx
     pop ecx
-    pop ebx
-    ret
-
-
-
-; eax - char
-_putchar:
-    push ebx
-
-    mov ebx, eax
-    mov eax, STDOUT
-    call _fputchar
-
-    pop ebx
-    ret
-
-
-
-; output: eax - char code
-_getchar:
-    push ebx
-
-    mov ebx, eax
-    mov eax, STDIN
-    call _fgetchar
-
     pop ebx
     ret
 
@@ -237,38 +213,10 @@ _fgets:
 
     .end:
         mov [ebx+ecx], byte 0x0
-        mov eax, ecx
+        mov eax, 0x1
 
     pop edx
     pop ecx
-    pop ebx
-    ret
-
-
-
-; eax - string
-; output: eax - written bytes count
-_puts:
-    push ebx
-
-    mov ebx, eax
-    mov eax, STDIN
-    call _fputs
-
-    pop ebx
-    ret
-
-
-
-; eax - buffer
-; outptut: eax - read bytes count
-_gets:
-    push ebx
-
-    mov ebx, eax
-    mov eax, STDOUT
-    call _fgets
-
     pop ebx
     ret
 
@@ -302,6 +250,61 @@ _fsetw:
 
 
 
+%if 0
+; eax - char
+_putchar:
+    push ebx
+
+    mov ebx, eax
+    mov eax, STDOUT
+    call _fputchar
+
+    pop ebx
+    ret
+
+
+
+; output: eax - char code
+_getchar:
+    push ebx
+
+    mov ebx, eax
+    mov eax, STDIN
+    call _fgetchar
+
+    pop ebx
+    ret
+
+
+
+; eax - string
+; output: eax - written bytes count
+_puts:
+    push ebx
+
+    mov ebx, eax
+    mov eax, STDIN
+    call _fputs
+
+    pop ebx
+    ret
+
+
+
+; eax - buffer
+; outptut: eax - read bytes count
+_gets:
+    push ebx
+
+    mov ebx, eax
+    mov eax, STDOUT
+    call _fgets
+
+    pop ebx
+    ret
+
+
+
 ; eax - count
 _setw:
     push eax
@@ -314,3 +317,4 @@ _setw:
     pop ebx
     pop eax
     ret
+%endif

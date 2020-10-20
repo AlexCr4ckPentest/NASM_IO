@@ -14,4 +14,4 @@
 %define O_DIRECT        040000
 %define O_NOATIME       01000000
 
-%endif
+%endif ; __IOD_DEFS_INC__
