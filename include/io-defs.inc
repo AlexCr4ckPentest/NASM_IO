@@ -14,4 +14,8 @@
 %define O_DIRECT        040000
 %define O_NOATIME       01000000
 
+%define SEEK_SET    0x0
+%define SEEK_CUR    0x1
+%define SEEK_END    0x2
+
 %endif ; __IOD_DEFS_INC__
