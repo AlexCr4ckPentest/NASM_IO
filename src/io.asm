@@ -1,9 +1,11 @@
 ; io.asm
 
 %include "../include/io-defs.inc"
-%include "../include/strlen.inc"
 
 
+
+global _open
+global _close
 
 global _write
 global _read
@@ -12,9 +14,11 @@ global _fgetchar
 global _putchar
 global _getchar
 global _fputs
-;global _fgets
+global _fgets
 global _puts
-;global _gets
+global _gets
+global _fsetw
+global _setw
 
 
 
@@ -22,9 +26,66 @@ section .text
 
 
 
+; eax - filename
+; ebx - flags
+; ecx - mode
+; output: eax - handle
+_open:
+    push ebx
+    push ecx
+    push edx
+ 
+    mov edx, ecx
+    mov ecx, ebx
+    mov ebx, eax
+    mov eax, 0x5 ; sys_open
+    int 0x80
+
+    pop edx
+    pop ecx
+    pop ebx
+    ret
+
+
+
+; eax - handle
+_close:
+    push eax
+    push ebx
+
+    mov ebx, eax
+    mov eax, 0x6
+    int 0x80
+
+    pop ebx
+    pop eax
+    ret
+
+
+
+; eax - string
+; output: eax - string length
+__strlen:
+    push ebx
+    xor ebx, ebx
+
+    .next:
+        cmp [eax+ebx], byte 0x0
+        je .end
+        inc ebx
+        jmp .next
+
+    .end:
+        mov eax, ebx
+        pop ebx
+        ret
+
+
+
 ; eax - hande
 ; ebx - buffer
 ; ecx - count
+; output: eax - written bytes count
 _write:
     push ebx
     push ecx
@@ -46,6 +107,7 @@ _write:
 ; eax - handle
 ; ebx - buffer
 ; ecx - count
+; output: eax - read bytes count
 _read:
     push ebx
     push ecx
@@ -57,7 +119,9 @@ _read:
     mov eax, 0x3 ; sys_read
     int 0x80
 
+%if 0
     mov [ecx + eax - 1], byte 0x0 ; because NULL-terminated string
+%endif
 
     pop edx
     pop ecx
@@ -68,14 +132,21 @@ _read:
 
 ; eax - handle
 ; ebx - char
+; output: eax - written bytes count (1)
 _fputchar:
+    push ecx
+    push edx
     push ebx
 
-    mov ebx, esp
-    mov ecx, 0x1
-    call _write
+    mov ecx, esp
+    mov ebx, eax
+    mov eax, 0x4
+    mov edx, 0x1 ; one byte to write
+    int 0x80
 
     pop ebx
+    pop edx
+    pop ecx
     ret
 
 
@@ -89,11 +160,15 @@ _fgetchar:
 
     mov ebx, eax
     mov eax, 0x3
+
     push ebx
+
     mov ecx, esp
     mov edx, 0x1
     int 0x80
+
     mov eax, [esp]
+
     pop ebx
 
     pop edx
@@ -131,23 +206,91 @@ _getchar:
 
 ; eax - handle
 ; ebx - string
+; output: eax - written bytes count
 _fputs:
+
+%if 1
     push ebx
     push ecx
     push edx
 
-    mov edx, eax
+    push eax
 
     mov eax, ebx
-    call _strlen
+    call __strlen
     mov ecx, eax
 
-    mov eax, edx
+    mov eax, [esp]
     call _write
+    mov edx, eax
 
-    mov eax, edx
+    mov eax, [esp]
     mov ebx, 0xa
     call _fputchar
+    inc edx
+
+    pop eax
+    mov eax, edx
+
+    pop edx
+    pop ecx
+    pop ebx
+%endif
+
+%if 0
+    push ebx
+    push ecx
+    push edx
+
+    sub esp, 8
+
+    mov dword [esp-4], ebx
+    mov dword [esp-8], eax
+
+    .write_next:
+        mov eax, dword [esp-8]
+        mov ebx, dword [esp-4]
+        movzx ebx, byte [ebx]
+        movsx ebx, bl
+        call _fputchar
+        add dword [esp-4], 1
+        cmp bl, bl
+        jne .write_next
+
+    add esp, 8
+
+    pop edx
+    pop ecx
+    pop ebx
+%endif
+
+    ret
+
+
+
+; eax - handle
+; ebx - buffer
+; output: eax - read bytes count
+_fgets:
+    push ebx
+    push ecx
+    push edx
+
+    xor ecx, ecx
+    mov edx, eax
+
+    .read_next:
+        mov eax, edx
+        call _fgetchar
+        cmp eax, 0xa
+        je .end
+        mov [ebx+ecx], eax
+        inc ecx
+        jmp .read_next
+
+    .end:
+        mov [ebx+ecx], byte 0x0
+        mov eax, ecx
 
     pop edx
     pop ecx
@@ -156,14 +299,8 @@ _fputs:
 
 
 
-; eax - handle
-; ebx - buffer
-_fgets:
-    ret
-
-
-
 ; eax - string
+; output: eax - written bytes count
 _puts:
     push ebx
 
@@ -177,5 +314,56 @@ _puts:
 
 
 ; eax - buffer
+; outptut: eax - read bytes count
 _gets:
+    push ebx
+
+    mov ebx, eax
+    mov eax, STDOUT
+    call _fgets
+
+    pop ebx
+    ret
+
+
+
+; eax - handle
+; ebx - count
+_fsetw:
+    push eax
+    push ebx
+    push ecx
+
+    mov ecx, eax
+
+    .next:
+        cmp ebx, 0x0
+        je .end
+        mov eax, ecx
+        push ebx
+        mov ebx, 0x20 ; space
+        call _fputchar
+        pop ebx
+        dec ebx
+        jmp .next
+
+    .end:
+        pop ecx
+        pop ebx
+        pop eax
+        ret
+
+
+
+; eax - count
+_setw:
+    push eax
+    push ebx
+
+    mov ebx, eax
+    mov eax, STDOUT
+    call _fsetw
+
+    pop ebx
+    pop eax
     ret

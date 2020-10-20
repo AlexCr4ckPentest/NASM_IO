@@ -1,5 +1,11 @@
 %include "io-defs.inc"
 
+%ifndef __IO_INC__
+%define __IO_INC__
+
+extern _open
+extern _close
+
 extern _write
 extern _read
 
@@ -14,3 +20,8 @@ extern _fgets
 
 extern _puts ; linked to stdout
 extern _gets ; linked to stdin
+
+extern _fsetw
+extern _setw ; linkend to stdout
+
+%endif
