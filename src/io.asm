@@ -63,25 +63,6 @@ _close:
 
 
 
-; eax - string
-; output: eax - string length
-__strlen:
-    push ebx
-    xor ebx, ebx
-
-    .next:
-        cmp [eax+ebx], byte 0x0
-        je .end
-        inc ebx
-        jmp .next
-
-    .end:
-        mov eax, ebx
-        pop ebx
-        ret
-
-
-
 ; eax - hande
 ; ebx - buffer
 ; ecx - count
@@ -158,18 +139,16 @@ _fgetchar:
     push ecx
     push edx
 
+    sub esp, 0x1
+
+    lea ecx, [esp-1]
     mov ebx, eax
     mov eax, 0x3
-
-    push ebx
-
-    mov ecx, esp
     mov edx, 0x1
     int 0x80
+    movzx eax, byte [esp-1]
 
-    mov eax, [esp]
-
-    pop ebx
+    add esp, 0x1
 
     pop edx
     pop ecx
@@ -208,62 +187,30 @@ _getchar:
 ; ebx - string
 ; output: eax - written bytes count
 _fputs:
-
-%if 1
     push ebx
-    push ecx
     push edx
+    push esi
 
-    push eax
-
-    mov eax, ebx
-    call __strlen
-    mov ecx, eax
-
-    mov eax, [esp]
-    call _write
-    mov edx, eax
-
-    mov eax, [esp]
-    mov ebx, 0xa
-    call _fputchar
-    inc edx
-
-    pop eax
-    mov eax, edx
-
-    pop edx
-    pop ecx
-    pop ebx
-%endif
-
-%if 0
-    push ebx
-    push ecx
-    push edx
-
-    sub esp, 8
-
-    mov dword [esp-4], ebx
-    mov dword [esp-8], eax
+    mov edx, eax ; handle
+    lea esi, [ebx]
 
     .write_next:
-        mov eax, dword [esp-8]
-        mov ebx, dword [esp-4]
-        movzx ebx, byte [ebx]
-        movsx ebx, bl
+        mov eax, edx
+        movzx ebx, byte [esi]
         call _fputchar
-        add dword [esp-4], 1
-        cmp bl, bl
+        inc esi
+        test bl, bl ; while (*ptr)
         jne .write_next
 
-    add esp, 8
+    mov eax, edx
+    mov ebx, 0xa
+    call _fputchar
 
+    mov eax, 0x1
+
+    pop esi
     pop edx
-    pop ecx
     pop ebx
-%endif
-
     ret
 
 
