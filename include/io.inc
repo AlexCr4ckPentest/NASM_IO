@@ -17,13 +17,7 @@ extern _fgets
 
 extern _fsetw
 
-%if 0
-extern _putchar
-extern _getchar
-extern _puts
-extern _gets
-extern _setw
-%endif
+
 
 ; linked to stdout
 %macro _putchar 1

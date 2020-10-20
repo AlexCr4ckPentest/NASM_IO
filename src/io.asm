@@ -18,14 +18,6 @@ global _fgets
 
 global _fsetw
 
-%if 0
-global _putchar
-global _getchar
-global _puts
-global _gets
-global _setw
-%endif
-
 
 
 section .text
@@ -247,74 +239,3 @@ _fsetw:
         pop ebx
         pop eax
         ret
-
-
-
-%if 0
-; eax - char
-_putchar:
-    push ebx
-
-    mov ebx, eax
-    mov eax, STDOUT
-    call _fputchar
-
-    pop ebx
-    ret
-
-
-
-; output: eax - char code
-_getchar:
-    push ebx
-
-    mov ebx, eax
-    mov eax, STDIN
-    call _fgetchar
-
-    pop ebx
-    ret
-
-
-
-; eax - string
-; output: eax - written bytes count
-_puts:
-    push ebx
-
-    mov ebx, eax
-    mov eax, STDIN
-    call _fputs
-
-    pop ebx
-    ret
-
-
-
-; eax - buffer
-; outptut: eax - read bytes count
-_gets:
-    push ebx
-
-    mov ebx, eax
-    mov eax, STDOUT
-    call _fgets
-
-    pop ebx
-    ret
-
-
-
-; eax - count
-_setw:
-    push eax
-    push ebx
-
-    mov ebx, eax
-    mov eax, STDOUT
-    call _fsetw
-
-    pop ebx
-    pop eax
-    ret
-%endif
