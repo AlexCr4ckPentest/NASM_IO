@@ -5,14 +5,14 @@
 %define STDIN   0x0
 %define STDERR  0x2
 
-%define O_READ_ONLY     00
-%define O_WRITE_ONLY    01
-%define O_READ_WRITE    02
-%define O_APPEND        02000
-%define O_TRUNCATE      01000
-%define O_CREATE        0100
-%define O_DIRECT        040000
-%define O_NOATIME       01000000
+%define O_READ_ONLY     0x0
+%define O_WRITE_ONLY    0x1
+%define O_READ_WRITE    0x2
+%define O_APPEND        0x2000
+%define O_TRUNCATE      0x1000
+%define O_CREATE        0x100
+%define O_DIRECT        0x40000
+%define O_NOATIME       0x1000000
 
 %define SEEK_SET    0x0
 %define SEEK_CUR    0x1
