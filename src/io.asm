@@ -64,8 +64,21 @@ _close:
 
 ; eax - handle
 ; ebx - offset
-; ecx - whence
+; ecx - from where
 _lseek:
+    push ebx
+    push ecx
+    push edx
+
+    mov edx, ecx ; from where
+    mov ecx, ebx ; offset
+    mov ebx, eax ; handle
+    mov eax, 0x13 ; sys_lseek
+    int 0x80
+
+    pop edx
+    pop ecx
+    pop ebx
     ret
 
 
