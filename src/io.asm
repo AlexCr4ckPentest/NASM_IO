@@ -6,19 +6,18 @@
 
 global _open
 global _close
+global _lseek
 
 global _write
 global _read
+
 global _fputchar
 global _fgetchar
-global _putchar
-global _getchar
+
 global _fputs
 global _fgets
-global _puts
-global _gets
+
 global _fsetw
-global _setw
 
 
 
@@ -63,6 +62,27 @@ _close:
 
 
 
+; eax - handle
+; ebx - offset
+; ecx - from where
+_lseek:
+    push ebx
+    push ecx
+    push edx
+
+    mov edx, ecx ; from where
+    mov ecx, ebx ; offset
+    mov ebx, eax ; handle
+    mov eax, 0x13 ; sys_lseek
+    int 0x80
+
+    pop edx
+    pop ecx
+    pop ebx
+    ret
+
+
+
 ; eax - hande
 ; ebx - buffer
 ; ecx - count
@@ -99,10 +119,6 @@ _read:
     mov ebx, eax ; handle
     mov eax, 0x3 ; sys_read
     int 0x80
-
-%if 0
-    mov [ecx + eax - 1], byte 0x0 ; because NULL-terminated string
-%endif
 
     pop edx
     pop ecx
@@ -152,32 +168,6 @@ _fgetchar:
 
     pop edx
     pop ecx
-    pop ebx
-    ret
-
-
-
-; eax - char
-_putchar:
-    push ebx
-
-    mov ebx, eax
-    mov eax, STDOUT
-    call _fputchar
-
-    pop ebx
-    ret
-
-
-
-; output: eax - char code
-_getchar:
-    push ebx
-
-    mov ebx, eax
-    mov eax, STDIN
-    call _fgetchar
-
     pop ebx
     ret
 
@@ -237,38 +227,10 @@ _fgets:
 
     .end:
         mov [ebx+ecx], byte 0x0
-        mov eax, ecx
+        mov eax, 0x1
 
     pop edx
     pop ecx
-    pop ebx
-    ret
-
-
-
-; eax - string
-; output: eax - written bytes count
-_puts:
-    push ebx
-
-    mov ebx, eax
-    mov eax, STDIN
-    call _fputs
-
-    pop ebx
-    ret
-
-
-
-; eax - buffer
-; outptut: eax - read bytes count
-_gets:
-    push ebx
-
-    mov ebx, eax
-    mov eax, STDOUT
-    call _fgets
-
     pop ebx
     ret
 
@@ -299,18 +261,3 @@ _fsetw:
         pop ebx
         pop eax
         ret
-
-
-
-; eax - count
-_setw:
-    push eax
-    push ebx
-
-    mov ebx, eax
-    mov eax, STDOUT
-    call _fsetw
-
-    pop ebx
-    pop eax
-    ret
