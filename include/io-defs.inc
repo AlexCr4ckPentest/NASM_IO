@@ -1,5 +1,5 @@
-%ifndef __IOD_DEFS_INC__
-%define __IOD_DEFS_INC__
+%ifndef __IO_DEFS_INC__
+%define __IO_DEFS_INC__
 
 %define STDOUT  0x1
 %define STDIN   0x0
@@ -18,4 +18,4 @@
 %define SEEK_CUR    0x1
 %define SEEK_END    0x2
 
-%endif ; __IOD_DEFS_INC__
+%endif ; __IO_DEFS_INC__
