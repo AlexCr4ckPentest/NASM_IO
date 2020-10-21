@@ -10,7 +10,7 @@ assembly: main.asm src/io.asm
 	$(AS) $(ASFLAGS) main.asm
 	$(AS) $(ASFLAGS) src/io.asm
 
-linking: main.o src/io.o src/strlen.o
+linking: main.o src/io.o
 	$(LD) $(LDFLAGS) main.o src/io.o -o main
 
 clean:
