@@ -162,8 +162,8 @@ _fgetchar:
     mov eax, 0x3
     mov edx, 0x1
     int 0x80
-    movzx eax, byte [esp-1]
 
+    movzx eax, byte [esp-1]
     add esp, 0x1
 
     pop edx
@@ -178,28 +178,28 @@ _fgetchar:
 ; output: eax - written bytes count
 _fputs:
     push ebx
-    push edx
+    push ecx
     push esi
 
-    mov edx, eax ; handle
+    mov ecx, eax ; handle
     lea esi, dword [ebx]
 
     .write_next:
-        mov eax, edx
+        mov eax, ecx
         movzx ebx, byte [esi]
         call _fputchar
         inc esi
         test bl, bl ; while (*ptr)
         jne .write_next
 
-    mov eax, edx
+    mov eax, ecx
     mov ebx, 0xa
     call _fputchar
 
     mov eax, 0x1
 
     pop esi
-    pop edx
+    pop ecx
     pop ebx
     ret
 
@@ -210,27 +210,26 @@ _fputs:
 ; output: eax - read bytes count
 _fgets:
     push ebx
-    push ecx
-    push edx
+    push edi
 
-    xor ecx, ecx
-    mov edx, eax
+    lea edi, dword [ebx]
+    mov ebx, eax
 
     .read_next:
-        mov eax, edx
+        mov eax, ebx
         call _fgetchar
         cmp eax, 0xa
         je .end
-        mov [ebx+ecx], eax
-        inc ecx
+        mov [edi], eax
+        inc edi
         jmp .read_next
 
     .end:
-        mov [ebx+ecx], byte 0x0
-        mov eax, 0x1
+        mov [edi], byte 0x0
 
-    pop edx
-    pop ecx
+    mov eax, 0x1
+
+    pop edi
     pop ebx
     ret
 
