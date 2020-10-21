@@ -178,28 +178,28 @@ _fgetchar:
 ; output: eax - written bytes count
 _fputs:
     push ebx
-    push edx
+    push ecx
     push esi
 
-    mov edx, eax ; handle
+    mov ecx, eax ; handle
     lea esi, dword [ebx]
 
     .write_next:
-        mov eax, edx
+        mov eax, ecx
         movzx ebx, byte [esi]
         call _fputchar
         inc esi
         test bl, bl ; while (*ptr)
         jne .write_next
 
-    mov eax, edx
+    mov eax, ecx
     mov ebx, 0xa
     call _fputchar
 
     mov eax, 0x1
 
     pop esi
-    pop edx
+    pop ecx
     pop ebx
     ret
 
