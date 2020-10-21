@@ -182,7 +182,7 @@ _fputs:
     push esi
 
     mov edx, eax ; handle
-    lea esi, [ebx]
+    lea esi, dword [ebx]
 
     .write_next:
         mov eax, edx
